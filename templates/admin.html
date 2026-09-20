@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Control Panel - Smart Waste Management</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="navbar">
+        <div class="logo">
+            <span>♻️ SmartWaste AI</span>
+            <span class="logo-badge">Engineering Project</span>
+        </div>
+        <nav>
+            <a href="/">Home</a>
+            <a href="/classify">AI Classifier</a>
+            <a href="/routes">Route Optimizer</a>
+            <a href="/dashboard">Analytics Dashboard</a>
+            <a href="/admin" class="active">Admin Panel</a>
+        </nav>
+    </header>
+
+    <main class="container-wide">
+        <!-- Login Modal View (Visible if not authenticated as Admin) -->
+        <div id="adminLoginView" class="auth-center-card">
+            <div class="card auth-card">
+                <h2>🔐 Admin Secure Login</h2>
+                <p class="text-sm text-muted">Enter administrative credentials to access system record management.</p>
+                
+                <form id="adminLoginForm" onsubmit="handleAdminLogin(event)">
+                    <div class="form-group">
+                        <label>Username or Email:</label>
+                        <input type="text" id="adminUsername" placeholder="admin" required class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Password:</label>
+                        <input type="password" id="adminPassword" placeholder="••••••••" required class="form-control">
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Login to Admin Portal</button>
+                </form>
+
+
+            </div>
+        </div>
+
+        <!-- Main Admin Dashboard View (Visible when authenticated as Admin) -->
+        <div id="adminDashboardView" class="hidden">
+            <section class="hero-sm-flex">
+                <div>
+                    <h1>System Administrative Management</h1>
+                    <p>Manage system users, AI detection records, master categories, bin locations, and route logs.</p>
+                </div>
+                <div class="admin-profile-badge">
+                    <span id="adminSessionName">Admin: admin</span>
+                    <button onclick="handleAdminLogout()" class="btn btn-secondary btn-sm">Logout</button>
+                </div>
+            </section>
+
+            <!-- KPI Counters Bar -->
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <span class="metric-label">Registered Users</span>
+                    <span id="adminUsersCount" class="metric-value">0</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-label">Waste Detections</span>
+                    <span id="adminDetectionsCount" class="metric-value">0</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-label">Master Categories</span>
+                    <span id="adminCategoriesCount" class="metric-value">0</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-label">Collection Bins</span>
+                    <span id="adminLocationsCount" class="metric-value">0</span>
+                </div>
+            </div>
+
+            <!-- Navigation Tabs -->
+            <div class="card">
+                <div class="tab-buttons">
+                    <button id="tabUsersBtn" class="tab-btn active" onclick="switchAdminTab('users')">👥 Users</button>
+                    <button id="tabDetectionsBtn" class="tab-btn" onclick="switchAdminTab('detections')">📸 Waste Detections</button>
+                    <button id="tabCategoriesBtn" class="tab-btn" onclick="switchAdminTab('categories')">🏷️ Categories</button>
+                    <button id="tabLocationsBtn" class="tab-btn" onclick="switchAdminTab('locations')">📍 Locations</button>
+                    <button id="tabRoutesBtn" class="tab-btn" onclick="switchAdminTab('routes')">🚚 Optimized Routes</button>
+                </div>
+
+                <!-- 1. Users Management Tab -->
+                <div id="adminUsersTab" class="admin-tab-content">
+                    <h3>Registered Accounts</h3>
+                    <div class="table-responsive">
+                        <table class="history-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Username</th>
+                                    <th>Email</th>
+                                    <th>Role</th>
+                                    <th>Date Joined</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 2. Waste Detections Tab -->
+                <div id="adminDetectionsTab" class="admin-tab-content hidden">
+                    <h3>AI Waste Detections Log</h3>
+                    <div class="table-responsive">
+                        <table class="history-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Image</th>
+                                    <th>Category</th>
+                                    <th>Type</th>
+                                    <th>Bin</th>
+                                    <th>Confidence</th>
+                                    <th>User ID</th>
+                                    <th>Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="detectionsTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 3. Categories Management Tab -->
+                <div id="adminCategoriesTab" class="admin-tab-content hidden">
+                    <div class="card-header-flex">
+                        <h3>Master Waste Categories</h3>
+                        <button onclick="toggleCategoryModal()" class="btn btn-primary btn-sm">+ Add New Category</button>
+                    </div>
+
+                    <!-- Add Category Form -->
+                    <div id="addCategoryModal" class="add-cat-box hidden">
+                        <h4>Add Master Waste Category</h4>
+                        <form onsubmit="handleAddCategory(event)">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Category Name:</label>
+                                    <input type="text" id="catName" placeholder="e.g. Hazardous E-Waste" required class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <label>Waste Type:</label>
+                                    <input type="text" id="catType" placeholder="e.g. Special Waste" required class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Recommended Bin Color:</label>
+                                    <select id="catColor" class="form-control">
+                                        <option value="Green">Green (Organic/Wet)</option>
+                                        <option value="Blue">Blue (Recyclable/Dry)</option>
+                                        <option value="Black">Black (General/Hazardous)</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Disposal Suggestion:</label>
+                                    <input type="text" id="catSuggestion" placeholder="e.g. Dispose in specialized drop-off points." required class="form-control">
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Save Category</button>
+                        </form>
+                    </div>
+
+                    <div class="table-responsive margin-top-sm">
+                        <table class="history-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Category Name</th>
+                                    <th>Type</th>
+                                    <th>Bin Color</th>
+                                    <th>Disposal Suggestion</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="categoriesTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 4. Locations Tab -->
+                <div id="adminLocationsTab" class="admin-tab-content hidden">
+                    <h3>Collection Locations / Bins</h3>
+                    <div class="table-responsive">
+                        <table class="history-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Location Name</th>
+                                    <th>Coordinates</th>
+                                    <th>Fill Level</th>
+                                    <th>Weight (kg)</th>
+                                    <th>Priority</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="locationsTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 5. Optimized Routes Tab -->
+                <div id="adminRoutesTab" class="admin-tab-content hidden">
+                    <h3>Route Optimization Logs</h3>
+                    <div class="table-responsive">
+                        <table class="history-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Route Name</th>
+                                    <th>Distance</th>
+                                    <th>Est. Time</th>
+                                    <th>Fuel Usage</th>
+                                    <th>Stops Count</th>
+                                    <th>Created At</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="routesTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+</body>
+</html>

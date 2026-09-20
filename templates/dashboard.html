@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Executive Analytics Dashboard - Smart Waste Management</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Chart.js Library -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <header class="navbar">
+        <div class="logo">
+            <span>♻️ SmartWaste AI</span>
+            <span class="logo-badge">Engineering Project</span>
+        </div>
+        <nav>
+            <a href="/">Home</a>
+            <a href="/classify">AI Classifier</a>
+            <a href="/routes">Route Optimizer</a>
+            <a href="/dashboard" class="active">Analytics Dashboard</a>
+            <a href="/admin">Admin Panel</a>
+        </nav>
+    </header>
+
+    <main class="container-wide">
+        <section class="hero-sm">
+            <h1>Executive Analytics & Management Dashboard</h1>
+            <p>Real-time system statistics, AI waste segregation metrics, bin capacity status, and route logistics performance.</p>
+        </section>
+
+        <!-- KPI Metric Summary Cards -->
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <span class="metric-label">Total AI Scans</span>
+                <span id="dashScans" class="metric-value">0</span>
+                <span class="text-sm text-muted">Scanned Waste Images</span>
+            </div>
+            <div class="metric-card">
+                <span class="metric-label">Recycling Efficiency</span>
+                <span id="dashRecycling" class="metric-value">0%</span>
+                <span class="text-sm text-muted">Recyclable Waste Ratio</span>
+            </div>
+            <div class="metric-card">
+                <span class="metric-label">Total Municipal Bins</span>
+                <span id="dashBins" class="metric-value">0</span>
+                <span class="text-sm text-muted">Active Collection Locations</span>
+            </div>
+            <div class="metric-card card-urgent">
+                <span class="metric-label">Urgent / Overflown Bins</span>
+                <span id="dashUrgent" class="metric-value text-danger">0</span>
+                <span class="text-sm text-muted">Require Immediate Dispatch</span>
+            </div>
+        </div>
+
+        <!-- Charts Grid Section -->
+        <div class="grid-layout margin-bottom">
+            <!-- Chart 1: Category Distribution -->
+            <div class="card">
+                <h2>Waste Category Distribution</h2>
+                <div class="chart-container">
+                    <canvas id="categoryChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Chart 2: Bin Capacity Status -->
+            <div class="card">
+                <h2>Collection Bin Fill Level Status</h2>
+                <div class="chart-container">
+                    <canvas id="binStatusChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tables & Route Logistics Grid -->
+        <div class="grid-layout margin-bottom">
+            <!-- Recent AI Detections -->
+            <div class="card">
+                <h2>Recent AI Waste Detections</h2>
+                <div class="table-responsive">
+                    <table class="history-table">
+                        <thead>
+                            <tr>
+                                <th>Image</th>
+                                <th>Category</th>
+                                <th>Type</th>
+                                <th>Bin</th>
+                                <th>Confidence</th>
+                                <th>Timestamp</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dashDetectionsBody">
+                            <tr><td colspan="6" class="text-center">Loading recent detections...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Urgent Bins & Route Summary -->
+            <div class="card flex-column-gap">
+                <div>
+                    <h2>🚨 High-Priority Bins Needing Pickup</h2>
+                    <div id="urgentBinsList" class="urgent-bins-list">
+                        <p class="text-muted">Loading urgent bins...</p>
+                    </div>
+                </div>
+
+                <div class="latest-route-card">
+                    <h3>🚚 Last Route Plan Logistics</h3>
+                    <div id="routeSummaryContent">
+                        <p class="text-muted">No route executed yet.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+</body>
+</html>

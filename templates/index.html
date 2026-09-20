@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-Enabled Smart Waste Segregation & Route Optimization</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="navbar">
+        <div class="logo">
+            <span>♻️ SmartWaste AI</span>
+            <span class="logo-badge">Engineering Project</span>
+        </div>
+        <nav>
+            <a href="/" class="active">Home</a>
+            <a href="/classify">AI Classifier</a>
+            <a href="/routes">Route Optimizer</a>
+            <a href="/dashboard">Analytics Dashboard</a>
+            <a href="/admin">Admin Panel</a>
+        </nav>
+    </header>
+
+    <main class="container">
+        <!-- Hero Section -->
+        <section class="hero">
+            <h1>AI-Enabled Smart Waste Segregation & Collection Route Optimization System</h1>
+            <p>An integrated, data-driven software platform combining Deep Learning computer vision for automatic waste classification with VRP route optimization algorithms for sustainable municipal waste management.</p>
+            
+            <div class="hero-actions">
+                <a href="/classify" class="btn btn-primary btn-lg">🚀 Launch AI Waste Classifier</a>
+                <a href="/routes" class="btn btn-secondary btn-lg">🗺️ Calculate Collection Routes</a>
+            </div>
+        </section>
+
+        <!-- System Workflow Diagram -->
+        <section class="card workflow-card margin-bottom">
+            <h2>Complete System Workflow</h2>
+            <div class="workflow-steps-grid">
+                <div class="workflow-step">
+                    <div class="step-badge">1</div>
+                    <h3>User Auth & Login</h3>
+                    <p>Users and drivers authenticate to track scan history and manage assigned routes.</p>
+                </div>
+                <div class="workflow-step">
+                    <div class="step-badge">2</div>
+                    <h3>AI Waste Classification</h3>
+                    <p>Deep learning scans waste images to classify organic, plastic, paper, glass, metal, and general trash.</p>
+                </div>
+                <div class="workflow-step">
+                    <div class="step-badge">3</div>
+                    <h3>Database Logging</h3>
+                    <p>Classification results, bin color recommendations, and confidence scores are saved to SQLite.</p>
+                </div>
+                <div class="workflow-step">
+                    <div class="step-badge">4</div>
+                    <h3>Route Optimization</h3>
+                    <p>Nearest Neighbor algorithm plans optimal collection paths for high-fill bins, cutting fuel & distance.</p>
+                </div>
+                <div class="workflow-step">
+                    <div class="step-badge">5</div>
+                    <h3>Executive Dashboard</h3>
+                    <p>Real-time Chart.js graphs, recycling efficiency rates, and fleet logistics monitoring.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quick Classifier Preview Card -->
+        <section class="card margin-bottom">
+            <h2>Quick AI Waste Classification</h2>
+            <div class="grid-layout">
+                <div>
+                    <div class="drop-zone" id="homeDropZone">
+                        <div class="drop-zone-prompt">
+                            <span class="upload-icon">📷</span>
+                            <p><strong>Upload Waste Image</strong></p>
+                            <p class="text-sm">Click or drag image (PNG, JPG, WEBP)</p>
+                        </div>
+                        <input type="file" id="homeImageInput" accept="image/*" class="file-input">
+                        <img id="homeImagePreview" class="image-preview hidden" alt="Uploaded preview">
+                    </div>
+                    <button onclick="homeQuickClassify()" id="homeClassifyBtn" class="btn btn-primary btn-block margin-top-sm" disabled>
+                        🔍 Classify Image Now
+                    </button>
+                </div>
+                <div>
+                    <div id="homeResultBox" class="state-box">
+                        <p class="text-muted">Select an image to see immediate classification and bin segregation advice.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Navigation Links Grid -->
+        <section class="module-links-grid margin-bottom">
+            <a href="/classify" class="module-card">
+                <span class="module-icon">📷</span>
+                <h3>AI Waste Classifier</h3>
+                <p>Detect waste types, get bin color advice, and save classification records.</p>
+            </a>
+            <a href="/routes" class="module-card">
+                <span class="module-icon">🗺️</span>
+                <h3>Route Optimization</h3>
+                <p>Interactive Leaflet map, location manager, and VRP route planner.</p>
+            </a>
+            <a href="/dashboard" class="module-card">
+                <span class="module-icon">📊</span>
+                <h3>Executive Dashboard</h3>
+                <p>View Chart.js metrics, recycling rates, and urgent bin pickup alerts.</p>
+            </a>
+            <a href="/admin" class="module-card">
+                <span class="module-icon">🔐</span>
+                <h3>Admin Panel</h3>
+                <p>Manage registered accounts, detection records, categories, and logs.</p>
+            </a>
+        </section>
+    </main>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

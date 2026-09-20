@@ -1,0 +1,17 @@
+# Core Web Framework
+Flask>=3.0.2
+Werkzeug>=3.0.1
+
+# Environment Management
+python-dotenv>=1.0.1
+
+# Production WSGI Server (Windows)
+waitress>=3.0.0
+
+# Note: No external AI/ML (TensorFlow, PyTorch) or Database (SQLAlchemy) libraries are listed here because the project's 'predict.py' and 'optimizer.py' use standard Python built-in math/byte operations, and the database relies entirely on the built-in 'sqlite3' module.
+
+# Database
+supabase>=2.3.0
+
+# Cloud Storage
+cloudinary>=1.39.0

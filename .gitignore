@@ -1,0 +1,42 @@
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+
+# Python caching
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Database
+*.db
+*.sqlite3
+/database/waste_management.db
+
+# Uploads
+/static/uploads/
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Logs & Temp files
+*.log
+*.tmp
+*.temp
+.DS_Store
+
+# Datasets and Large Files
+dataset/
+datasets/
+data/
+*.csv
+*.xlsx
+*.jsonl
+*.h5
+*.pt
+*.onnx

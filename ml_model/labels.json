@@ -1,0 +1,9 @@
+{
+  "0": "organic_wet",
+  "1": "dry_paper",
+  "2": "dry_cardboard",
+  "3": "recyclable_plastic",
+  "4": "recyclable_glass",
+  "5": "recyclable_metal",
+  "6": "non_recyclable_trash"
+}

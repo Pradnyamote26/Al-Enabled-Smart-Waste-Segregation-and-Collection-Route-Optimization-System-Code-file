@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Route Optimization - Smart Waste Collection</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Leaflet OpenStreetMap CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+</head>
+<body>
+    <header class="navbar">
+        <div class="logo">
+            <span>♻️ SmartWaste AI</span>
+            <span class="logo-badge">Engineering Project</span>
+        </div>
+        <nav>
+            <a href="/">Home</a>
+            <a href="/classify">AI Classifier</a>
+            <a href="/routes" class="active">Route Optimizer</a>
+            <a href="/dashboard">Analytics Dashboard</a>
+            <a href="/admin">Admin Panel</a>
+        </nav>
+    </header>
+
+    <main class="container-wide">
+        <section class="hero-sm">
+            <h1>Waste Collection Route Optimization Engine</h1>
+            <p>Calculates fuel-efficient collection paths connecting municipal bins using the Nearest Neighbor VRP algorithm.</p>
+        </section>
+
+        <!-- Route Metrics Header Bar -->
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <span class="metric-label">Total Distance</span>
+                <span id="metricDistance" class="metric-value">0.0 km</span>
+            </div>
+            <div class="metric-card">
+                <span class="metric-label">Est. Travel Time</span>
+                <span id="metricTime" class="metric-value">0.0 mins</span>
+            </div>
+            <div class="metric-card">
+                <span class="metric-label">Est. Fuel Consumption</span>
+                <span id="metricFuel" class="metric-value">0.0 L</span>
+            </div>
+            <div class="metric-card">
+                <span class="metric-label">Visited Collection Points</span>
+                <span id="metricBins" class="metric-value">0 Bins</span>
+            </div>
+        </div>
+
+        <!-- Main Map & Control Split Screen -->
+        <div class="route-split-layout">
+            <!-- Left Side: Interactive Leaflet Map -->
+            <div class="card map-card">
+                <div class="card-header-flex">
+                    <h2>Interactive Route Map</h2>
+                    <button onclick="calculateOptimizedRoute()" class="btn btn-primary">
+                        🚀 Calculate Optimized Route
+                    </button>
+                </div>
+                <div id="map" class="map-container"></div>
+                <div class="map-legend">
+                    <span>🚩 <strong>Depot:</strong> Central Hub</span>
+                    <span>🔴 <strong>Overflown (>=90%)</strong></span>
+                    <span>🟡 <strong>Needs Collection (>=60%)</strong></span>
+                    <span>🟢 <strong>Normal (<60%)</strong></span>
+                </div>
+            </div>
+
+            <!-- Right Side: Location Controls & Sequence -->
+            <div class="card controls-card">
+                <h2>Collection Points & Sequence</h2>
+
+                <!-- Tabs: Add Location vs Route Sequence -->
+                <div class="tab-buttons">
+                    <button id="tabSeqBtn" class="tab-btn active" onclick="switchTab('sequence')">Recommended Sequence</button>
+                    <button id="tabAddBtn" class="tab-btn" onclick="switchTab('add')">+ Add Location</button>
+                </div>
+
+                <!-- Sequence Tab Content -->
+                <div id="sequenceTab" class="tab-content">
+                    <div id="routeSequenceList" class="sequence-list">
+                        <p class="text-muted text-center">Click "Calculate Optimized Route" to compute sequence.</p>
+                    </div>
+                </div>
+
+                <!-- Add Location Tab Content -->
+                <div id="addLocationTab" class="tab-content hidden">
+                    <form id="addLocationForm" onsubmit="handleAddLocation(event)">
+                        <div class="form-group">
+                            <label>Location / Bin Name:</label>
+                            <input type="text" id="locName" placeholder="e.g. Bin #6 - Student Center" required class="form-control">
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Latitude:</label>
+                                <input type="number" step="any" id="locLat" placeholder="18.5220" required class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label>Longitude:</label>
+                                <input type="number" step="any" id="locLng" placeholder="73.8580" required class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Fill Level (%):</label>
+                                <input type="number" id="locFill" min="0" max="100" value="80" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label>Priority (1-5):</label>
+                                <input type="number" id="locPriority" min="1" max="5" value="4" class="form-control">
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block">Add Collection Point</button>
+                    </form>
+                </div>
+
+                <!-- Available Bins List -->
+                <div class="bins-manage-box">
+                    <h3>Active Collection Locations</h3>
+                    <div id="locationsList" class="locations-compact-list">
+                        <p class="text-muted">Loading collection points...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Algorithm Explanation Card -->
+        <section class="card algo-explain-card">
+            <h2>Route Optimization Algorithm Breakdown</h2>
+            <div class="algo-details">
+                <div class="algo-point">
+                    <h3>1. Nearest Neighbor Algorithm (VRP/TSP)</h3>
+                    <p>The system utilizes the <strong>Nearest Neighbor Heuristic</strong> to solve the Vehicle Routing Problem. Starting from the central depot, the truck iteratively selects the closest unvisited collection point with high priority until all urgent bins are serviced.</p>
+                </div>
+                <div class="algo-point">
+                    <h3>2. Haversine Spatial Distance Formula</h3>
+                    <p>Geographical distances between GPS coordinates $(\text{Latitude, Longitude})$ are calculated using the <strong>Haversine Formula</strong>, accounting for the Earth's spherical curvature to ensure precision spatial metrics ($d$ in kilometers).</p>
+                </div>
+                <div class="algo-point">
+                    <h3>3. Vehicle Capacity & Priority Weighting</h3>
+                    <p>Collection points with fill levels $\ge 60\%$ and priority ratings 4–5 are prioritized first. The algorithm tracks vehicle payload capacity ($1000\text{ kg}$) and schedules mid-route depot return trips if payload limits are exceeded.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="{{ url_for('static', filename='js/map.js') }}"></script>
+</body>
+</html>

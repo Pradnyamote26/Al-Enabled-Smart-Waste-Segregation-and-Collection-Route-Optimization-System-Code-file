@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Waste Segregation & Classification</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="navbar">
+        <div class="logo">
+            <span>♻️ SmartWaste AI</span>
+            <span class="logo-badge">Engineering Project</span>
+        </div>
+        <nav>
+            <a href="/">Home</a>
+            <a href="/classify" class="active">AI Classifier</a>
+            <a href="/routes">Route Optimizer</a>
+            <a href="/dashboard">Analytics Dashboard</a>
+            <a href="/admin">Admin Panel</a>
+        </nav>
+    </header>
+
+    <main class="container">
+        <section class="hero-sm">
+            <h1>AI Waste Classification & Segregation</h1>
+            <p>Upload a waste image to classify its category, determine its waste type, and view disposal instructions.</p>
+        </section>
+
+        <!-- Upload & Analysis Interface -->
+        <div class="grid-layout margin-bottom">
+            <!-- 1. Input Upload Card -->
+            <section class="card upload-card">
+                <h2>1. Upload Waste Image</h2>
+                
+                <div class="drop-zone" id="dropZone">
+                    <div class="drop-zone-prompt">
+                        <span class="upload-icon">📷</span>
+                        <p><strong>Drag & drop waste image here</strong></p>
+                        <p class="text-sm">Supported formats: JPG, PNG, WEBP</p>
+                    </div>
+                    <input type="file" id="imageInput" accept="image/*" class="file-input">
+                    <img id="imagePreview" class="image-preview hidden" alt="Uploaded waste preview">
+                </div>
+
+                <div class="button-group margin-top-sm">
+                    <button id="classifyBtn" onclick="processClassification()" class="btn btn-primary" disabled>
+                        🔍 Classify Waste
+                    </button>
+                    <button onclick="resetForm()" class="btn btn-secondary">Reset</button>
+                </div>
+            </section>
+
+            <!-- 2. AI Prediction Display Card -->
+            <section class="card result-card">
+                <h2>2. Prediction & Segregation Advice</h2>
+                
+                <div id="loadingState" class="state-box hidden">
+                    <div class="spinner"></div>
+                    <p>Processing image with AI Classifier...</p>
+                </div>
+
+                <div id="placeholderState" class="state-box">
+                    <p class="text-muted">Upload an image and click "Classify Waste" to view predictions.</p>
+                </div>
+
+                <div id="resultContent" class="result-content hidden">
+                    <!-- Category Name & Confidence Score -->
+                    <div class="category-header">
+                        <div>
+                            <span class="label-sm">Detected Category:</span>
+                            <div id="resCategory" class="category-title">-</div>
+                        </div>
+                        <div class="score-container">
+                            <span class="label-sm">Confidence:</span>
+                            <div id="resConfidence" class="confidence-badge">0%</div>
+                        </div>
+                    </div>
+
+                    <!-- Recommended Bin Indicator -->
+                    <div class="bin-indicator" id="binIndicator">
+                        <span id="binBadge" class="bin-badge">Bin</span>
+                        <div>
+                            <strong id="binColorText">Recommended Bin Color</strong>
+                            <p id="resWasteType" class="type-highlight">Waste Type: -</p>
+                        </div>
+                    </div>
+
+                    <!-- Disposal Suggestion Box -->
+                    <div class="suggestion-box">
+                        <span class="suggestion-title">💡 Segregation & Disposal Suggestion:</span>
+                        <p id="resSuggestion" class="suggestion-text">-</p>
+                    </div>
+
+                    <!-- Metadata List -->
+                    <div class="details-list">
+                        <div class="detail-item">
+                            <span>Image Reference:</span>
+                            <a id="resImageRef" href="#" target="_blank" class="link-sm">View Saved Image</a>
+                        </div>
+                        <div class="detail-item">
+                            <span>User ID / Session:</span>
+                            <strong id="resUserId">Guest User (Null)</strong>
+                        </div>
+                        <div class="detail-item">
+                            <span>Database Status:</span>
+                            <span id="dbStatusBadge" class="badge-success">Saved to DB</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Database Detection History Table -->
+        <section class="card history-section">
+            <h2>Recent Waste Detections Log (Database Audit)</h2>
+            <div class="table-responsive">
+                <table class="history-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Image</th>
+                            <th>Category</th>
+                            <th>Waste Type</th>
+                            <th>Bin Color</th>
+                            <th>Confidence</th>
+                            <th>Disposal Suggestion</th>
+                            <th>User ID</th>
+                            <th>Timestamp</th>
+                        </tr>
+                    </thead>
+                    <tbody id="historyTableBody">
+                        <tr>
+                            <td colspan="9" class="text-center">Loading recent detections from database...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <script src="{{ url_for('static', filename='js/classifier.js') }}"></script>
+</body>
+</html>
