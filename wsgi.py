@@ -1,6 +1,8 @@
+import os
 from backend.app import app
 
 if __name__ == "__main__":
     from waitress import serve
-    print("Starting production server on http://127.0.0.1:5000 using Waitress...")
-    serve(app, host='127.0.0.1', port=5000)
+    port = int(os.environ.get("PORT", 5000))
+    print(f"Starting production server on 0.0.0.0:{port} using Waitress...")
+    serve(app, host='0.0.0.0', port=port)
