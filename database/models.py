@@ -340,3 +340,51 @@ class Route:
         supabase = get_db()
         response = supabase.table("routes").select("*").order("id", desc=True).limit(limit).execute()
         return [cls(**row) for row in response.data]
+
+
+class WasteDetection:
+    def __init__(self, id, category_name, waste_type, bin_color, confidence_score, image_path, disposal_suggestion, user_id=None, detected_at=None):
+        self.id = id
+        self.category_name = category_name
+        self.waste_type = waste_type
+        self.bin_color = bin_color
+        self.confidence_score = confidence_score
+        self.image_path = image_path
+        self.disposal_suggestion = disposal_suggestion
+        self.user_id = user_id
+        self.detected_at = detected_at
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'category_name': self.category_name,
+            'waste_type': self.waste_type,
+            'bin_color': self.bin_color,
+            'confidence_score': self.confidence_score,
+            'image_path': self.image_path,
+            'disposal_suggestion': self.disposal_suggestion,
+            'user_id': self.user_id,
+            'detected_at': str(self.detected_at) if self.detected_at else None
+        }
+
+    @classmethod
+    def create(cls, category_name, waste_type, bin_color, confidence_score, image_path, disposal_suggestion, user_id=None):
+        supabase = get_db()
+        data = {
+            "category_name": category_name,
+            "waste_type": waste_type,
+            "bin_color": bin_color,
+            "confidence_score": confidence_score,
+            "image_path": image_path,
+            "disposal_suggestion": disposal_suggestion,
+            "user_id": user_id
+        }
+        response = supabase.table("waste_detections").insert(data).execute()
+        return cls(**response.data[0]) if response.data else None
+
+    @classmethod
+    def get_recent(cls, limit=15):
+        supabase = get_db()
+        response = supabase.table("waste_detections").select("*").order("id", desc=True).limit(limit).execute()
+        return [cls(**row) for row in response.data]
+
