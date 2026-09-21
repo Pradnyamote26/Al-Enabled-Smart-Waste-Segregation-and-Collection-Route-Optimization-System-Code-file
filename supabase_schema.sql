@@ -116,6 +116,19 @@ CREATE TABLE IF NOT EXISTS waste_detections (
     detected_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
+-- 10. Locations Table (Waste Collection Points)
+CREATE TABLE IF NOT EXISTS locations (
+    id SERIAL PRIMARY KEY,
+    location_name TEXT NOT NULL,
+    latitude REAL NOT NULL,
+    longitude REAL NOT NULL,
+    capacity_kg REAL NOT NULL DEFAULT 100.0,
+    current_fill_level REAL NOT NULL DEFAULT 0.0,
+    current_weight_kg REAL NOT NULL DEFAULT 0.0,
+    priority INTEGER NOT NULL DEFAULT 1,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
 -- DISABLE ROW LEVEL SECURITY (Allows your backend to insert data without error)
 ALTER TABLE users DISABLE ROW LEVEL SECURITY;
 ALTER TABLE dumpyards DISABLE ROW LEVEL SECURITY;
@@ -126,6 +139,7 @@ ALTER TABLE collection_tasks DISABLE ROW LEVEL SECURITY;
 ALTER TABLE status_history DISABLE ROW LEVEL SECURITY;
 ALTER TABLE routes DISABLE ROW LEVEL SECURITY;
 ALTER TABLE waste_detections DISABLE ROW LEVEL SECURITY;
+ALTER TABLE locations DISABLE ROW LEVEL SECURITY;
 
 -- Seed Demo Data
 INSERT INTO users (id, username, email, password_hash, role) VALUES

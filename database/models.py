@@ -388,3 +388,56 @@ class WasteDetection:
         response = supabase.table("waste_detections").select("*").order("id", desc=True).limit(limit).execute()
         return [cls(**row) for row in response.data]
 
+
+class Location:
+    def __init__(self, id, location_name, latitude, longitude, capacity_kg, current_fill_level, current_weight_kg, priority, created_at=None):
+        self.id = id
+        self.location_name = location_name
+        self.latitude = latitude
+        self.longitude = longitude
+        self.capacity_kg = capacity_kg
+        self.current_fill_level = current_fill_level
+        self.current_weight_kg = current_weight_kg
+        self.priority = priority
+        self.created_at = created_at
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'location_name': self.location_name,
+            'latitude': self.latitude,
+            'longitude': self.longitude,
+            'capacity_kg': self.capacity_kg,
+            'current_fill_level': self.current_fill_level,
+            'current_weight_kg': self.current_weight_kg,
+            'priority': self.priority,
+            'created_at': str(self.created_at) if self.created_at else None
+        }
+
+    @classmethod
+    def create(cls, location_name, latitude, longitude, capacity_kg, current_fill_level, current_weight_kg, priority):
+        supabase = get_db()
+        data = {
+            "location_name": location_name,
+            "latitude": latitude,
+            "longitude": longitude,
+            "capacity_kg": capacity_kg,
+            "current_fill_level": current_fill_level,
+            "current_weight_kg": current_weight_kg,
+            "priority": priority
+        }
+        response = supabase.table("locations").insert(data).execute()
+        return cls(**response.data[0]) if response.data else None
+
+    @classmethod
+    def get_all(cls):
+        supabase = get_db()
+        response = supabase.table("locations").select("*").order("id").execute()
+        return [cls(**row) for row in response.data]
+
+    @classmethod
+    def delete(cls, location_id):
+        supabase = get_db()
+        supabase.table("locations").delete().eq("id", location_id).execute()
+        return True
+
